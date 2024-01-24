@@ -6,7 +6,7 @@ jobs:
       - image: cimg/node:18.10.0
     environment:
       JVM_OPTS: -Xmx2048m
-      JAVA_HOME: /Users/psl/Library/Java/JavaVirtualMachines/openjdk-20.0.2
+      JAVA_HOME: /Users/psl/Library/Java/JavaVirtualMachines/openjdk-20.0.2/Contents/Home
     steps:
       - checkout
       - run:
