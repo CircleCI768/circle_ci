@@ -4,7 +4,6 @@ jobs:
     working_directory: ~/repo
     docker:
       - image: cimg/node:18.10.0
-      - image: cimg/android:2022.10
     environment:
       JVM_OPTS: -Xmx2048m
     steps:
@@ -20,10 +19,6 @@ jobs:
       - run:
           name: Run tests
           command: npm run test
-
-      - run:
-          name: Set up Java environment
-          command: sudo apt-get install openjdk-11-jdk
 
       - run:
           name: Move to Android Directory
