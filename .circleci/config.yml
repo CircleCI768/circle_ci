@@ -1,10 +1,4 @@
-name: React Native Android Build
-
-on:
-  push:
-    branches:
-      - main
-
+version: 2.1
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,6 +15,12 @@ jobs:
       - name: Install Dependencies
         run: |
           npm install
+
+      - name: Set up Android
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '20'
 
       - name: Build Android
         run: |
