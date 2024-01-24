@@ -14,3 +14,9 @@ jobs:
       - run:
           name: Run tests
           command: npm run test
+      - run:
+          name: Move to Android Directory
+          command: cd android
+      - run:
+          name: Make Debug Build
+          command: ./gradlew assembleDebug
