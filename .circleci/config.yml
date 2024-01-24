@@ -4,13 +4,11 @@ jobs:
     working_directory: ~/repo
     docker:
       - image: cimg/node:18.10.0
+      - image: cimg/android:2021.08-1
     environment:
       JVM_OPTS: -Xmx2048m
     steps:
       - checkout
-
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
 
       - run:
           name: Install Dependencies
@@ -20,18 +18,10 @@ jobs:
           name: Run tests
           command: npm run test
 
-      - restore_cache:
-          key: gradle-cache-{{ checksum "android/gradle/wrapper/gradle-wrapper.properties" }}
-
       - run:
           name: Make Debug Build
           working_directory: ~/repo/android
           command: ./gradlew assembleDebug
-
-      - save_cache:
-          paths:
-            - ~/.gradle
-          key: gradle-cache-{{ checksum "android/gradle/wrapper/gradle-wrapper.properties" }}
 
       - store_artifacts:
           path: app/build/outputs/apk/debug
