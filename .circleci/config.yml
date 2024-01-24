@@ -4,7 +4,6 @@ jobs:
     working_directory: ~/repo
     docker:
       - image: cimg/node:18.10.0
-      - image: cimg/android:2021.08-1
     environment:
       JVM_OPTS: -Xmx2048m
     steps:
