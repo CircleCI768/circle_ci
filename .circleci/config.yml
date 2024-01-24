@@ -17,3 +17,7 @@ jobs:
       - run:
           name: Move to Android Directory
           command: cd android
+      - run:
+          name: Make Debug Build
+          working_directory: ~/repo/android
+          command: ./gradlew assembleDebug
