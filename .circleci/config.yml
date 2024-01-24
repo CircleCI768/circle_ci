@@ -14,9 +14,36 @@ jobs:
       - run:
           name: Run tests
           command: npm run test
-      - run:
-          name: Move to Android Directory
-          command: cd android
-      - run:
-          name: Make Debug Build
-          command: ./gradlew assembleDebug
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: Execute Gradle build
+        run: |
+          cd android
+          ./gradlew build
+      - name: Build Android JS Bundle
+        run: |
+          yarn run package-android
+      - name: Delete Android build duplicate assets resource
+        run: yarn run delete-pics
+      - name: Install bundler
+        run: |
+          cd android
+          gem install bundler
+      - name: Install gem plugins
+        run: |
+          cd android
+          bundle install
+      - name: Run fastlane
+        run: |
+          cd android
+          bundle exec fastlane build_qa
