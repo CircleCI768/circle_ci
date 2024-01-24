@@ -1,28 +1,19 @@
 version: 2.1
 jobs:
   build:
-    runs-on: ubuntu-latest
-
+    working_directory: ~/repo
+    docker:
+      - image: cimg/node:18.10.0
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
-
-      - name: Install Dependencies
-        run: |
-          npm install
-
-      - name: Set up Android
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'adopt'
-          java-version: '20'
-
-      - name: Build Android
-        run: |
-          cd android
-          ./gradlew assembleDebug
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install Dependencies
+          command: npm install
+      - run:
+          name: Run tests
+          command: npm run test
+      - run:
+          name: Move to Android Directory
+          command: cd android
