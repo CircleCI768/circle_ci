@@ -1,28 +1,39 @@
-version: 2.1
+name: Build Android Debug APK
+
+on:
+  push:
+    branches:
+      - main # Change this to your main branch name, if different
+  # You can add more trigger events if needed, e.g., pull_request
+
 jobs:
   build:
-    working_directory: ~/repo
-    docker:
-      - image: cimg/node:18.10.0
-      - image: cimg/android:latest # Use a generic tag, or choose an available tag
-    environment:
-      JVM_OPTS: -Xmx2048m
+    runs-on: ubuntu-latest # You can change the runner as needed
+
     steps:
-      - checkout
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - run:
-          name: Install Dependencies
-          command: npm install
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: 17 # You can change the Java version if needed
 
-      - run:
-          name: Run tests
-          command: npm run test
+      - name: Install Node.js and npm
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20 # You can change the Node.js version if needed
 
-      - run:
-          name: Make Debug Build
-          working_directory: ~/repo/android
-          command: ./gradlew assembleDebug
+      - name: Install Dependencies
+        run: npm install
+        working-directory: android-app # Change to your Android project directory
 
-      - store_artifacts:
-          path: app/build/outputs/apk/debug
-          destination: debug-apks
+      - name: Build Android Debug APK
+        run: ./gradlew assembleDebug
+        working-directory: android-app # Change to your Android project directory
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: debug-apk
+          path: android-app/app/build/outputs/apk/debug/app-debug.apk
