@@ -4,7 +4,7 @@ jobs:
     working_directory: ~/repo
     docker:
       - image: cimg/node:18.10.0
-      - image: cimg/android:2021.08.01 # Updated to a correct version tag
+      - image: cimg/android:latest # Use a generic tag, or choose an available tag
     environment:
       JVM_OPTS: -Xmx2048m
     steps:
