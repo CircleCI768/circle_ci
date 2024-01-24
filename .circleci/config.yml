@@ -1,49 +1,34 @@
-version: 2.1
+name: React Native Android Build
+
+on:
+  push:
+    branches:
+      - main
+
 jobs:
   build:
-    working_directory: ~/repo
-    docker:
-      - image: cimg/node:18.10.0
+    runs-on: ubuntu-latest
+
     steps:
-      - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "yarn.lock" }}
-      - run:
-          name: Install Dependencies
-          command: npm install
-      - run:
-          name: Run tests
-          command: npm run test
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v2
-      - uses: actions/cache@v3
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
-      - name: Execute Gradle build
+          node-version: 14
+
+      - name: Install Dependencies
+        run: |
+          npm install
+
+      - name: Set up Android
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+
+      - name: Build Android
         run: |
           cd android
-          ./gradlew build
-      - name: Build Android JS Bundle
-        run: |
-          yarn run package-android
-      - name: Delete Android build duplicate assets resource
-        run: yarn run delete-pics
-      - name: Install bundler
-        run: |
-          cd android
-          gem install bundler
-      - name: Install gem plugins
-        run: |
-          cd android
-          bundle install
-      - name: Run fastlane
-        run: |
-          cd android
-          bundle exec fastlane build_qa
+          ./gradlew assembleDebug
